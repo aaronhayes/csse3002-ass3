@@ -1,0 +1,320 @@
+
+%% aaa for csse3002
+%% author: Paul Bailes 7 May 2014
+
+%% INSERT ASSIGNMENT 3 SOLUTION CODE AT THIS POINT
+
+%% INSERT lvl1ok AT THIS POINT
+
+%% INSERT ANY RELATIONS REQUIRED BY lvl1ok AT THIS POINT
+
+%% INSERT semestersok AT THIS POINT
+
+%% INSERT ANY RELATIONS REQUIRED BY semestersok AT THIS POINT
+
+%% INSERT preok AT THIS POINT
+
+%% INSERT ANY RELATIONS REQUIRED BY preok AT THIS POINT
+
+%% MODIFY binftech AT THIS POINT
+%% binftech([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and prior study Prior qualifies for BInfTech
+binftech(SP) :- partAok(SP), partBok(SP), partBCok(SP), lvl3ok(SP).
+
+%% partAok([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and prior study Prior meets Part A requirements
+partAok(SP) :-
+	courses(SP,Crss),
+	member(comp3506,Crss),
+	member(csse1001,Crss),
+	member(csse2002,Crss),
+	member(csse3002,Crss),
+	member(infs1200,Crss),
+	member(deco1400,Crss),
+	member(deco2800,Crss),
+	member(deco3800,Crss),
+	member(deco3801,Crss),
+	member(math1061,Crss).
+
+%% partBok([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and prior study Prior meets Part B requirements
+partBok(SP) :-
+	findall(Crs, spHasPartB(SP,Crs), PartBs),
+	length(PartBs, NBs),
+	NBs >= 6.
+
+%%	spHasPartB(SP,Crs) :- if Crs is found in SP and Crs is in part B
+spHasPartB(SP,Crs) :-
+	partB(Crs),
+	courses(SP,Crss),
+	member(Crs, Crss).
+
+%% partBCok([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and prior study Prior meets combined Part B & C requirements
+partBCok(SP) :-
+	findall(Crs, spHasPartBC(SP, Crs), PartBCs),
+	length(PartBCs, NBCs),
+	NBCs =:= 14.
+
+%%	spHasPartBC(SP,Crs) :- if Crs is found in SP and Crs is in part B or part C
+spHasPartBC(SP,Crs) :-
+	partBC(Crs),
+	courses(SP,Crss),
+	member(Crs, Crss).
+
+%% lvl3ok([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and prior study Prior meets level 3 requirements
+lvl3ok(SP) :-
+	findall(Crs, spHasLvl3AB(SP, Crs), Lvl3s),
+	length(Lvl3s,N3s),
+	N3s >= 6.
+
+%%	spHasLvl3AB(SP,Crs) :- if Crs is found in SP and Crs is level 3 and Crs is in part A or part B
+spHasLvl3AB(SP,Crs) :-
+	lvl3(Crs),
+	partAB(Crs),
+	courses(SP,Crss),
+	member(Crs, Crss).
+
+%% courses(SP,Cs) :- Cs is list of courses in SP
+courses([Sm],Sm).
+courses([Sm|SP],Cs) :- courses(SP,CSP), append(Sm,CSP,Cs).
+
+%% properties of each course
+
+%% part A
+
+partA(comp3506).
+lvl3(comp3506).
+s1(comp3506).
+pre(comp3506,[csse2002]).
+
+partA(csse1001).
+lvl1(csse1001).
+s1(csse1001).
+pre(csse1001,[]).
+
+partA(csse2002).
+s1(csse2002).
+pre(csse2002,[csse1001]).
+
+partA(csse3002).
+s2(csse3002).
+lvl3(csse3002).
+pre(csse3002,[deco2800]).
+
+partA(deco1400).
+lvl1(deco1400).
+s2(deco1400).
+pre(deco1400,[]).
+
+partA(deco2800).
+s2(deco2800).
+pre(deco2800,[csse2002]).
+
+partA(deco3800).
+s1(deco3800).
+lvl3(deco3800).
+pre(deco3800,[deco2800]).
+pre(deco3800,[csse1001,infs2200]).
+
+partA(deco3801).
+s2(deco3801).
+lvl3(deco3801).
+pre(deco3801, [deco3800]).
+
+partA(infs1200).
+s2(infs1200).
+lvl1(infs1200).
+pre(infs1200,[math1061]).
+
+partA(math1061).
+s1(math1061).
+lvl1(math1061).
+pre(math1061,[]).
+
+%% part B
+
+partB(comp3301).
+s1(comp3301).
+lvl3(comp3301).
+pre(comp3301,[csse2310]).
+
+partB(comp3702).
+s2(comp3702).
+lvl3(comp3702).
+pre(comp3702,[comp3506]).
+
+partB(csse2010).
+s1(csse2010).
+lvl2(csse2010).
+pre(csse2010,[csse1001,math1061]).
+
+
+partB(csse2310).
+s2(csse2310).
+lvl2(csse2310).
+pre(csse2310,[csse2010]).
+
+partB(deco2500).
+s2(deco2500).
+lvl2(deco2500).
+pre(deco2500,[csse1001,deco1400]).
+
+partB(infs2200).
+s1(infs2200).
+lvl2(infs2200).
+pre(infs2200,[infs1200]).
+
+partB(infs3200).
+s1(infs3200).
+lvl3(infs3200).
+pre(infs3200,[infs2200]).
+
+partB(infs3204).
+s2(infs3204).
+lvl3(infs3204).
+pre(infs3204,[infs1200,csse2002]).
+
+partB(math1051).
+s1(math1051).
+lvl1(math1051).
+pre(math1051,[]).
+
+partB(math1052).
+s2(math1052).
+lvl1(math1052).
+pre(math1052,[math1051]).
+
+%% part C (free electives)
+
+%% level 1 electives
+partC(eltv1001).
+s1(eltv1001).
+lvl1(eltv1001).
+pre(eltv1001,[]).
+partC(eltv1002).
+s1(eltv1002).
+lvl1(eltv1002).
+pre(eltv1002,[]).
+partC(eltv1003).
+s1(eltv1003).
+lvl1(eltv1003).
+pre(eltv1003,[]).
+partC(eltv1004).
+s1(eltv1004).
+lvl1(eltv1004).
+pre(eltv1004,[]).
+partC(eltv1005).
+s2(eltv1005).
+lvl1(eltv1005).
+pre(eltv1005,[]).
+partC(eltv1006).
+s2(eltv1006).
+lvl1(eltv1006).
+pre(eltv1006,[]).
+partC(eltv1007).
+s2(eltv1007).
+lvl1(eltv1007).
+pre(eltv1007,[]).
+partC(eltv1008).
+s2(eltv1008).
+lvl1(eltv1008).
+pre(eltv1008,[]).
+
+%% level 2 electives
+partC(eltv2001).
+s1(eltv2001).
+lvl2(eltv2001).
+pre(eltv2001,[]).
+partC(eltv2002).
+s1(eltv2002).
+lvl2(eltv2002).
+pre(eltv2002,[]).
+partC(eltv2003).
+s1(eltv2003).
+lvl2(eltv2003).
+pre(eltv2003,[]).
+partC(eltv2004).
+s1(eltv2004).
+lvl2(eltv2004).
+pre(eltv2004,[]).
+partC(eltv2005).
+s2(eltv2005).
+lvl2(eltv2005).
+pre(eltv2005,[]).
+partC(eltv2006).
+s2(eltv2006).
+lvl2(eltv2006).
+pre(eltv2006,[]).
+partC(eltv2007).
+s2(eltv2007).
+lvl2(eltv2007).
+pre(eltv2007,[]).
+partC(eltv2008).
+s2(eltv2008).
+lvl2(eltv2008).
+pre(eltv2008,[]).
+
+%% level 3 electives
+partC(eltv3001).
+s1(eltv3001).
+lvl3(eltv3001).
+pre(eltv3001,[]).
+partC(eltv3002).
+s1(eltv3002).
+lvl3(eltv3002).
+pre(eltv3002,[]).
+partC(eltv3003).
+s1(eltv3003).
+lvl3(eltv3003).
+pre(eltv3003,[]).
+partC(eltv3004).
+s1(eltv3004).
+lvl3(eltv3004).
+pre(eltv3004,[]).
+partC(eltv3005).
+s2(eltv3005).
+lvl3(eltv3005).
+pre(eltv3005,[]).
+partC(eltv3006).
+s2(eltv3006).
+lvl3(eltv3006).
+pre(eltv3006,[]).
+partC(eltv3007).
+s2(eltv3007).
+lvl3(eltv3007).
+pre(eltv3007,[]).
+partC(eltv3008).
+s2(eltv3008).
+lvl3(eltv3008).
+pre(eltv3008,[]).
+
+%% Crs belongs to part A or part B
+partAB(Crs) :- partA(Crs); partB(Crs).
+
+%% Crs belongs to part B or part C
+partBC(Crs) :- partB(Crs); partC(Crs).
+
+%% examples of test harnesses - students should develop their own as required; and markers will use their own for grading
+%% testX(SP),binftech(SP) :- test that the plan defined n testX is valid BInfTech
+
+%% not valid binftech
+test1([[],[csse1001,math1061],[deco1400,infs1200],[csse2002],[deco2800],[comp3506,deco3800],[csse3002,deco3801]]).
+
+%% valid binftech
+test2([
+	[],
+	[csse1001,math1061,eltv1001,math1051],
+	[deco1400,infs1200,eltv1005,math1052],
+	[csse2002,csse2010,eltv2001,eltv2002],
+	[deco2800,csse2310,eltv2005,eltv2006],
+	[comp3506,deco3800,eltv3001,eltv3002],
+	[csse3002,deco3801,comp3702,infs3204]
+]).
+
+%% valid binftech
+testa([
+	[
+	csse1001,math1061,eltv1001,math1051,deco1400,infs1200,eltv1005,math1052,
+	csse2002,csse2010,eltv2001,eltv2002,deco2800,csse2310,eltv2005,eltv2006,
+	comp3506,deco3800,eltv3001,eltv3002
+	],
+	[],[csse3002,deco3801,comp3702,infs3204]
+]).
+
