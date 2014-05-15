@@ -6,7 +6,21 @@
 
 %% INSERT lvl1ok AT THIS POINT
 
+%% lvl1ok([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and
+%% prior study Prior meets level 1 requirements (12 courses at most)
+lvl1ok(SP) :-
+	findall(Crs, spHasLvl1(SP,Crs), Lvl1s),
+	length(Lvl1s,N1s),
+	N1s =< 12.
+
+
 %% INSERT ANY RELATIONS REQUIRED BY lvl1ok AT THIS POINT
+
+%%	 spHASLvl1(SP, Crs) :- if Crs is found in SP and Crs is level 1
+spHasLvl1(SP,Crs) :-
+       lvl1(Crs),
+       courses(SP,Crss),
+       member(Crs,Crss).
 
 %% INSERT semestersok AT THIS POINT
 
@@ -18,7 +32,7 @@
 
 %% MODIFY binftech AT THIS POINT
 %% binftech([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and prior study Prior qualifies for BInfTech
-binftech(SP) :- partAok(SP), partBok(SP), partBCok(SP), lvl3ok(SP).
+binftech(SP) :- partAok(SP), partBok(SP), partBCok(SP), lvl3ok(SP), lvl1ok(SP).
 
 %% partAok([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and prior study Prior meets Part A requirements
 partAok(SP) :-
@@ -290,6 +304,7 @@ partAB(Crs) :- partA(Crs); partB(Crs).
 
 %% Crs belongs to part B or part C
 partBC(Crs) :- partB(Crs); partC(Crs).
+
 
 %% examples of test harnesses - students should develop their own as required; and markers will use their own for grading
 %% testX(SP),binftech(SP) :- test that the plan defined n testX is valid BInfTech
