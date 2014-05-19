@@ -29,7 +29,7 @@ spHasLvl1(SP,Crs) :-
 
 %%	semestersok([Prior,S1,...,Sn]) :- study plan with semesters S1
 %%	... Sn and prior meets timetable requirements
-semesterok(SP) :-
+semestersok(SP) :-
 	removePrior(SP, SPnew),
 	spto_s1_s2(SPnew,SPs2,SPs1),
 
@@ -82,7 +82,7 @@ spHasS2(SP, Crs) :-
 
 %% MODIFY binftech AT THIS POINT
 %% binftech([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and prior study Prior qualifies for BInfTech
-binftech(SP) :- partAok(SP), partBok(SP), partBCok(SP), lvl3ok(SP), lvl1ok(SP), semesterok(SP).
+binftech(SP) :- partAok(SP), partBok(SP), partBCok(SP), lvl3ok(SP), lvl1ok(SP), semestersok(SP).
 
 %% partAok([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and prior study Prior meets Part A requirements
 partAok(SP) :-
