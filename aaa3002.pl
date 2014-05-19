@@ -36,12 +36,12 @@ semestersok(SP) :-
 	%% Find any Semester 2 Courses in the Semester 1 SP
 	findall(Crs, spHasS2(SPs1,Crs), S2s),
 	length(S2s,NS2s),
-	NS2s == 0,
+	NS2s =:= 0,
 
 	%% Find any Semester 1 Courses in the Semseter 2 SP
 	findall(Crs, spHasS1(SPs2,Crs), S1s),
 	length(S1s, NS1s),
-	NS1s == 0.
+	NS1s =:= 0.
 
 
 %% INSERT ANY RELATIONS REQUIRED BY semestersok AT THIS POINT
@@ -78,11 +78,62 @@ spHasS2(SP, Crs) :-
 
 %% INSERT preok AT THIS POINT
 
+%%	preok([Prior,S1,...,Sn]) :- study plan with semesters S1 ... Sn
+%%	and prior meets prerequsite requirements
+preok(SP) :-
+	reverse(SP, SPrev),
+	spHasPre(SPrev).
+
 %% INSERT ANY RELATIONS REQUIRED BY preok AT THIS POINT
+
+%%	sublist :- check if list X is in Y
+sublist([], _ ).
+sublist([Head|Tail], L) :-
+	member(Head, L),
+	subset(Tail, L).
+
+
+%%	 reverse :- reverse list L
+reverse(L, Rev) :- accRev(L, [], Rev).
+accRev([Head|Tail], Accu, Rev) :- accRev(Tail, [Head|Accu], Rev).
+accRev([], Accu, Accu).
+
+
+spHasPre(SP) :-
+	spHasPre(SP, SP).
+
+spHasPre([Load|_], [_|SP]) :-
+	% Check if course load has pres
+	semHasPre(Load, SP),
+	spHasPre(SP, SP).
+
+spHasPre([],_).
+
+spHasPre(_, []).
+
+semHasPre([], _).
+
+semHasPre(_, []).
+
+semHasPre(Load, SP) :-
+	semHasPre(Load, Load, SP).
+
+semHasPre([Course|_], [_|Sem], SP) :-
+	findall(Crs,hasPre(Course, SP, Crs), Pres),
+	length(Pres, NPres),
+	NPres >= 1,
+	semHasPre(Sem, Sem, SP).
+
+semHasPre([], _ , _ ).
+
+hasPre(Course, SP, Crs) :-
+	pre(Course, Crs),
+	courses(SP, Crss),
+	sublist(Crs, Crss).
 
 %% MODIFY binftech AT THIS POINT
 %% binftech([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and prior study Prior qualifies for BInfTech
-binftech(SP) :- partAok(SP), partBok(SP), partBCok(SP), lvl3ok(SP), lvl1ok(SP), semestersok(SP).
+binftech(SP) :- partAok(SP), partBok(SP), partBCok(SP), lvl3ok(SP), lvl1ok(SP), semestersok(SP), preok(SP).
 
 %% partAok([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and prior study Prior meets Part A requirements
 partAok(SP) :-
