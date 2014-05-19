@@ -4,6 +4,9 @@
 
 %% INSERT ASSIGNMENT 3 SOLUTION CODE AT THIS POINT
 
+%%	Load List Library (member, append, etc.)
+:- use_module(library(lists)).
+
 %% INSERT lvl1ok AT THIS POINT
 
 %% lvl1ok([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and
@@ -16,7 +19,7 @@ lvl1ok(SP) :-
 
 %% INSERT ANY RELATIONS REQUIRED BY lvl1ok AT THIS POINT
 
-%%	 spHASLvl1(SP, Crs) :- if Crs is found in SP and Crs is level 1
+%%	 spHasLvl1(SP, Crs) :- if Crs is found in SP and Crs is level 1
 spHasLvl1(SP,Crs) :-
        lvl1(Crs),
        courses(SP,Crss),
@@ -24,7 +27,54 @@ spHasLvl1(SP,Crs) :-
 
 %% INSERT semestersok AT THIS POINT
 
+%%	semestersok([Prior,S1,...,Sn]) :- study plan with semesters S1
+%%	... Sn and prior meets timetable requirements
+semesterok(SP) :-
+	removePrior(SP, SPnew),
+	spto_s1_s2(SPnew,SPs2,SPs1),
+
+	%% Find any Semester 2 Courses in the Semester 1 SP
+	findall(Crs, spHasS2(SPs1,Crs), S2s),
+	length(S2s,NS2s),
+	NS2s == 0,
+
+	%% Find any Semester 1 Courses in the Semseter 2 SP
+	findall(Crs, spHasS1(SPs2,Crs), S1s),
+	length(S1s, NS1s),
+	NS1s == 0.
+
+
 %% INSERT ANY RELATIONS REQUIRED BY semestersok AT THIS POINT
+
+%%	 removePrior Remove the prior courses from a study plan
+removePrior([_|SP], SP).
+
+%%	Split Study Plan (SP) into study plans for semesters 1 and 2
+spto_s1_s2(SP, SPs2, SPs1) :-
+    % First position is SPs1
+    s2_s1_s1(SP, SPs2, SPs1).
+
+%%	Handle the semester 1 position, then the semester 2 position
+s2_s1_s1([Head|Tail], SPs2, [Head|SPs1]) :-
+    s2_s1_s2(Tail, SPs2, SPs1).
+s2_s1_s1([], [], []).
+
+%%      Handle the semester 2 position; then the semester 1 position
+s2_s1_s2([Head|Tail], [Head|SPs2], SPs1) :-
+    s2_s1_s1(Tail, SPs2, SPs1).
+s2_s1_s2([], [], []).
+
+%%	 spHasS1(SP, Crs) :- if Crs is found in SP and Crs is s1
+spHasS1(SP, Crs) :-
+	s1(Crs),
+	courses(SP,Crss),
+	member(Crs,Crss).
+
+%%	 spHasS2(SP, Crs) :- if Crs is found in SP and Crs is s2
+spHasS2(SP, Crs) :-
+	s2(Crs),
+	courses(SP,Crss),
+	member(Crs,Crss).
 
 %% INSERT preok AT THIS POINT
 
@@ -32,7 +82,7 @@ spHasLvl1(SP,Crs) :-
 
 %% MODIFY binftech AT THIS POINT
 %% binftech([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and prior study Prior qualifies for BInfTech
-binftech(SP) :- partAok(SP), partBok(SP), partBCok(SP), lvl3ok(SP), lvl1ok(SP).
+binftech(SP) :- partAok(SP), partBok(SP), partBCok(SP), lvl3ok(SP), lvl1ok(SP), semesterok(SP).
 
 %% partAok([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and prior study Prior meets Part A requirements
 partAok(SP) :-
