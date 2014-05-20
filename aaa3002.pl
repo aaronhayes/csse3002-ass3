@@ -25,6 +25,10 @@ spHasLvl1(SP,Crs) :-
        courses(SP,Crss),
        member(Crs,Crss).
 
+
+
+
+
 %% INSERT semestersok AT THIS POINT
 
 %%	semestersok([Prior,S1,...,Sn]) :- study plan with semesters S1
@@ -76,13 +80,15 @@ spHasS2(SP, Crs) :-
 	courses(SP,Crss),
 	member(Crs,Crss).
 
+
+
 %% INSERT preok AT THIS POINT
 
 %%	preok([Prior,S1,...,Sn]) :- study plan with semesters S1 ... Sn
 %%	and prior meets prerequsite requirements
 preok(SP) :-
 	reverse(SP, SPrev),
-	spHasPre(SPrev).
+	spHasPre(SPrev, SPrev).
 
 %% INSERT ANY RELATIONS REQUIRED BY preok AT THIS POINT
 
@@ -99,37 +105,40 @@ accRev([Head|Tail], Accu, Rev) :- accRev(Tail, [Head|Accu], Rev).
 accRev([], Accu, Accu).
 
 
-spHasPre(SP) :-
-	spHasPre(SP, SP).
-
+%%	spHasPre ([Load|_], [_|SP]) :- Check if the Study Plan has
+%%	all required prerequiste complete. Course Load (Load) = one
+%%	semester
 spHasPre([Load|_], [_|SP]) :-
 	% Check if course load has pres
-	semHasPre(Load, SP),
+	semHasPre(Load, Load, SP),
 	spHasPre(SP, SP).
 
+%%	 spHasPre(X, Y) :- true if either X or Y is empty list.
 spHasPre([],_).
-
 spHasPre(_, []).
 
-semHasPre([], _).
-
-semHasPre(_, []).
-
-semHasPre(Load, SP) :-
-	semHasPre(Load, Load, SP).
-
+%%	semHasPre(Course, Sem, SP) :- Check if each indivdual course in
+%%	the semester has prequireisite requirements complete.
 semHasPre([Course|_], [_|Sem], SP) :-
-	findall(Crs,hasPre(Course, SP, Crs), Pres),
+	findall(Crs,courseHasPre(Course, SP, Crs), Pres),
 	length(Pres, NPres),
 	NPres >= 1,
 	semHasPre(Sem, Sem, SP).
 
-semHasPre([], _ , _ ).
+%%	semHasPre(Course,Semester,StudyPlan) :- if Course or SP is empty
+%%	return true.
+semHasPre([], _, _).
+semHasPre(_, _, []).
 
-hasPre(Course, SP, Crs) :-
+%%	courseHasPre(Course, SP, Crs) :- find pres of each course,
+%%	return courses that have been complete inacordance to
+%%	prequiresite requirements.
+courseHasPre(Course, SP, Crs) :-
 	pre(Course, Crs),
 	courses(SP, Crss),
 	sublist(Crs, Crss).
+
+
 
 %% MODIFY binftech AT THIS POINT
 %% binftech([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and prior study Prior qualifies for BInfTech
