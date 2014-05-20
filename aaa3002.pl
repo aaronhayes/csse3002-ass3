@@ -34,51 +34,60 @@ spHasLvl1(SP,Crs) :-
 %%	semestersok([Prior,S1,...,Sn]) :- study plan with semesters S1
 %%	... Sn and prior meets timetable requirements
 semestersok(SP) :-
+	%% Remove prior courses and split into two study plans
+	%% (semester 1 and semester 2 study plans).
 	removePrior(SP, SPnew),
-	spto_s1_s2(SPnew,SPs2,SPs1),
+	splitSP(SPnew,SPs2,SPs1),
 
-	%% Find any Semester 2 Courses in the Semester 1 SP
-	findall(Crs, spHasS2(SPs1,Crs), S2s),
-	length(S2s,NS2s),
-	NS2s =:= 0,
+	%% Check if SPs1 contains only s1 courses
+	courses(SPs1,Crss1),
+	spHasS1Only(Crss1,Crss1),
 
-	%% Find any Semester 1 Courses in the Semseter 2 SP
-	findall(Crs, spHasS1(SPs2,Crs), S1s),
-	length(S1s, NS1s),
-	NS1s =:= 0.
-
+	%% Check is SPs2 contains only s2 courses.
+	courses(SPs2,Crss2),
+	spHasS2Only(Crss2,Crss2).
 
 %% INSERT ANY RELATIONS REQUIRED BY semestersok AT THIS POINT
 
 %%	 removePrior Remove the prior courses from a study plan
 removePrior([_|SP], SP).
 
-%%	Split Study Plan (SP) into study plans for semesters 1 and 2
-spto_s1_s2(SP, SPs2, SPs1) :-
+%%	splitSP(SP,SPs2,SPs1) :- Split Study Plan (SP) into study plans
+%%	for semesters 1 (SPs1) and 2 (SPs2)
+splitSP(SP, SPs2, SPs1) :-
     % First position is SPs1
-    s2_s1_s1(SP, SPs2, SPs1).
+    getS1(SP, SPs2, SPs1).
 
-%%	Handle the semester 1 position, then the semester 2 position
-s2_s1_s1([Head|Tail], SPs2, [Head|SPs1]) :-
-    s2_s1_s2(Tail, SPs2, SPs1).
-s2_s1_s1([], [], []).
+%%	getS1([Head|Tail], SPs2, [Head|SPs1]) :- Handle the semester 1
+%%	position, then the semester 2 position
+getS1([Head|Tail], SPs2, [Head|SPs1]) :-
+    getS2(Tail, SPs2, SPs1).
+getS1([], [], []).
 
-%%      Handle the semester 2 position; then the semester 1 position
-s2_s1_s2([Head|Tail], [Head|SPs2], SPs1) :-
-    s2_s1_s1(Tail, SPs2, SPs1).
-s2_s1_s2([], [], []).
+%%	getS2([Head|Tail], [Head|SPs2], SPs1) :- Handle the
+%	semester 2 position, then the semester 1 position
+getS2([Head|Tail], [Head|SPs2], SPs1) :-
+    getS1(Tail, SPs2, SPs1).
+getS2([], [], []).
 
-%%	 spHasS1(SP, Crs) :- if Crs is found in SP and Crs is s1
-spHasS1(SP, Crs) :-
-	s1(Crs),
-	courses(SP,Crss),
-	member(Crs,Crss).
+%%	spHasS1Only([Course|_], [_|SPs1]) :- check if Study Plan for
+%%	Semester 1 courses SPs1 only has semester 1 courses included
+spHasS1Only([Course|_], [_|SPs1]) :-
+	s1(Course),
+	spHasS1Only(SPs1,SPs1).
 
-%%	 spHasS2(SP, Crs) :- if Crs is found in SP and Crs is s2
-spHasS2(SP, Crs) :-
-	s2(Crs),
-	courses(SP,Crss),
-	member(Crs,Crss).
+%%	spHasS1Only([], _) :- if course is empty true.
+spHasS1Only([], _).
+
+%%	spHasS2Only([Course|_], [_|SPs2]) :- check if Study Plan for
+%%	Semester 2 courses SPs2 only has semester 2 courses included
+spHasS2Only([Course|_], [_|SPs2]) :-
+	s2(Course),
+	spHasS2Only(SPs2,SPs2).
+
+%%	spHasS2Only([], _) :- if course is empty true.
+spHasS2Only([], _).
+
 
 
 
@@ -89,6 +98,7 @@ spHasS2(SP, Crs) :-
 preok(SP) :-
 	reverse(SP, SPrev),
 	spHasPre(SPrev, SPrev).
+
 
 %% INSERT ANY RELATIONS REQUIRED BY preok AT THIS POINT
 
