@@ -4,9 +4,6 @@
 
 %% INSERT ASSIGNMENT 3 SOLUTION CODE AT THIS POINT
 
-%%	Load List Library (member, append, etc.)
-:- use_module(library(lists)).
-
 %% INSERT lvl1ok AT THIS POINT
 
 %% lvl1ok([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and
@@ -77,7 +74,7 @@ spHasS1Only([Course|_], [_|SPs1]) :-
 	spHasS1Only(SPs1,SPs1).
 
 %%	spHasS1Only([], _) :- if course is empty true.
-spHasS1Only([], _).
+spHasS1Only([], []).
 
 %%	spHasS2Only([Course|_], [_|SPs2]) :- check if Study Plan for
 %%	Semester 2 courses SPs2 only has semester 2 courses included
@@ -86,7 +83,7 @@ spHasS2Only([Course|_], [_|SPs2]) :-
 	spHasS2Only(SPs2,SPs2).
 
 %%	spHasS2Only([], _) :- if course is empty true.
-spHasS2Only([], _).
+spHasS2Only([], []).
 
 
 
@@ -114,6 +111,9 @@ reverse(L, Rev) :- accRev(L, [], Rev).
 accRev([Head|Tail], Accu, Rev) :- accRev(Tail, [Head|Accu], Rev).
 accRev([], Accu, Accu).
 
+%%	 spHasPre(X, Y) :- true if either X or Y is empty list.
+spHasPre([],_).
+spHasPre(_, []).
 
 %%	spHasPre ([Load|_], [_|SP]) :- Check if the Study Plan has
 %%	all required prerequiste complete. Course Load (Load) = one
@@ -123,9 +123,10 @@ spHasPre([Load|_], [_|SP]) :-
 	semHasPre(Load, Load, SP),
 	spHasPre(SP, SP).
 
-%%	 spHasPre(X, Y) :- true if either X or Y is empty list.
-spHasPre([],_).
-spHasPre(_, []).
+
+%%	semHasPre(Course,Semester,StudyPlan) :- if Course or SP is empty
+semHasPre([], _, _).
+semHasPre(_, _, []).
 
 %%	semHasPre(Course, Sem, SP) :- Check if each indivdual course in
 %%	the semester has prequireisite requirements complete.
@@ -135,10 +136,6 @@ semHasPre([Course|_], [_|Sem], SP) :-
 	NPres >= 1,
 	semHasPre(Sem, Sem, SP).
 
-%%	semHasPre(Course,Semester,StudyPlan) :- if Course or SP is empty
-%%	return true.
-semHasPre([], _, _).
-semHasPre(_, _, []).
 
 %%	courseHasPre(Course, SP, Crs) :- find pres of each course,
 %%	return courses that have been complete inacordance to
@@ -147,7 +144,6 @@ courseHasPre(Course, SP, Crs) :-
 	pre(Course, Crs),
 	courses(SP, Crss),
 	sublist(Crs, Crss).
-
 
 
 %% MODIFY binftech AT THIS POINT
