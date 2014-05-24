@@ -58,6 +58,9 @@ test(s2, [fail]) :- semestersok([[], [math1061, csse1001, csse2002], [deco1400, 
 % 0 courses :- TRUE
 test(zero) :- semestersok([[],[],[]]).
 
+test(empty) :- semestersok([[]]).
+test(emptys1) :- semestersok([[],[]]).
+
 :- end_tests(semestersok).
 
 

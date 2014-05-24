@@ -37,12 +37,14 @@ semestersok(SP) :-
 	splitSP(SPnew,SPs2,SPs1),
 
 	%% Check if SPs1 contains only s1 courses
+	(SPs1 == [] -> true;
 	courses(SPs1,Crss1),
-	spHasS1Only(Crss1,Crss1),
+	spHasS1Only(Crss1,Crss1)),
 
 	%% Check is SPs2 contains only s2 courses.
+	(SPs2 == [] -> true;
 	courses(SPs2,Crss2),
-	spHasS2Only(Crss2,Crss2).
+	spHasS2Only(Crss2,Crss2)).
 
 %% INSERT ANY RELATIONS REQUIRED BY semestersok AT THIS POINT
 
@@ -111,7 +113,7 @@ reverse(L, Rev) :- accRev(L, [], Rev).
 accRev([Head|Tail], Accu, Rev) :- accRev(Tail, [Head|Accu], Rev).
 accRev([], Accu, Accu).
 
-%%	 spHasPre(X, Y) :- true if either X or Y is empty list.
+%%	 spHasPre(Load, SP) :- true if either X or Y is empty list.
 spHasPre([],_).
 spHasPre(_, []).
 
