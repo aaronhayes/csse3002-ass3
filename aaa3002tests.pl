@@ -60,6 +60,7 @@ test(zero) :- semestersok([[],[],[]]).
 
 test(empty) :- semestersok([[]]).
 test(emptys1) :- semestersok([[],[]]).
+test(null) :- semestersok([]).
 
 :- end_tests(semestersok).
 
@@ -122,10 +123,56 @@ test(csse2010g, [fail]) :- preok([[], [csse2010], [], [], [], [math1061, csse100
 :-begin_tests(binftech).
 %% not valid binftech
 test(nonvalid, [fail]) :- binftech([[],[csse1001,math1061],[deco1400,infs1200],[csse2002],[deco2800],[comp3506,deco3800],[csse3002,deco3801]]).
+test(empty, [fail]) :- binftech([]).
+test(emptySP, [fail]) :- binftech([[]]).
 
+
+%% invalid binftech
+test(missingPre, [fail]) :- binftech([
+	[],
+	[csse1001,math1061,eltv1001,eltv1002],
+	[deco1400,infs1200,eltv1005,math1052],
+	[csse2002,csse2010,eltv2001,eltv2002],
+	[deco2800,csse2310,eltv2005,eltv2006],
+	[comp3506,deco3800,eltv3001,eltv3002],
+	[csse3002,deco3801,comp3702,infs3204]
+]).
+
+%% invalid binftech
+test(semesterwrong, [fail]) :- binftech([
+	[],
+	[csse1001,math1061,eltv1001,math1051],
+	[deco1400,infs1200,eltv1005],
+	[csse2002,csse2010,eltv2001,eltv2002,math1052],
+	[deco2800,csse2310,eltv2005,eltv2006],
+	[comp3506,deco3800,eltv3001,eltv3002],
+	[csse3002,deco3801,comp3702,infs3204]
+]).
+
+%% invalid binftech
+test(tooManyLvl1s, [fail]) :- binftech([
+	[],
+	[csse1001,math1061,eltv1001,math1051, eltv1002],
+	[deco1400,infs1200,eltv1005,math1052],
+	[csse2002,csse2010,eltv2001,eltv2002, eltv1003],
+	[deco2800,csse2310,eltv2005,eltv2006, eltv1006],
+	[comp3506,deco3800,eltv3001,eltv3002, eltv1004],
+	[csse3002,deco3801,comp3702,infs3204, eltv1007]
+]).
 %% valid binftech
 test(valid) :- binftech([
 	[],
+	[csse1001,math1061,eltv1001,math1051],
+	[deco1400,infs1200,eltv1005,math1052],
+	[csse2002,csse2010,eltv2001,eltv2002],
+	[deco2800,csse2310,eltv2005,eltv2006],
+	[comp3506,deco3800,eltv3001,eltv3002],
+	[csse3002,deco3801,comp3702,infs3204]
+]).
+
+%% valid binftech
+test(yearslater) :- binftech([
+	[],[],[],[],[],[],[],[],[],[],[],[],[],
 	[csse1001,math1061,eltv1001,math1051],
 	[deco1400,infs1200,eltv1005,math1052],
 	[csse2002,csse2010,eltv2001,eltv2002],
@@ -142,6 +189,14 @@ test(valida) :- binftech([
 	comp3506,deco3800,eltv3001,eltv3002
 	],
 	[],[csse3002,deco3801,comp3702,infs3204]
+]).
+
+%% valid binftech
+test(validprior) :- binftech([
+	[
+	csse1001,math1061,eltv1001,math1051,deco1400,infs1200,eltv1005,math1052,
+	csse2002,csse2010,eltv2001,eltv2002,deco2800,csse2310,eltv2005,eltv2006,
+	comp3506,deco3800,eltv3001,eltv3002,csse3002,deco3801,comp3702,infs3204]
 ]).
 
 

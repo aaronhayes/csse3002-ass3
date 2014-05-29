@@ -39,12 +39,15 @@ semestersok(SP) :-
 	%% Check if SPs1 contains only s1 courses
 	(SPs1 == [] -> true;
 	courses(SPs1,Crss1),
-	spHasS1Only(Crss1,Crss1)),
+	spHasS1Only(Crss1)),
 
 	%% Check is SPs2 contains only s2 courses.
 	(SPs2 == [] -> true;
 	courses(SPs2,Crss2),
-	spHasS2Only(Crss2,Crss2)).
+	spHasS2Only(Crss2)).
+
+%% semestersok([]) :- null input case
+semestersok([]).
 
 %% INSERT ANY RELATIONS REQUIRED BY semestersok AT THIS POINT
 
@@ -69,23 +72,23 @@ getS2([Head|Tail], [Head|SPs2], SPs1) :-
     getS1(Tail, SPs2, SPs1).
 getS2([], [], []).
 
-%%	spHasS1Only([Course|_], [_|SPs1]) :- check if Study Plan for
+%%	spHasS1Only([Course|SPs1]) :- check if Study Plan for
 %%	Semester 1 courses SPs1 only has semester 1 courses included
-spHasS1Only([Course|_], [_|SPs1]) :-
+spHasS1Only([Course|SPs1]) :-
 	s1(Course),
-	spHasS1Only(SPs1,SPs1).
+	spHasS1Only(SPs1).
 
-%%	spHasS1Only([], _) :- if course is empty true.
-spHasS1Only([], []).
+%%	spHasS1Only([]) :- true.
+spHasS1Only([]).
 
-%%	spHasS2Only([Course|_], [_|SPs2]) :- check if Study Plan for
+%%	spHasS2Only([Course|SPs2]) :- check if Study Plan for
 %%	Semester 2 courses SPs2 only has semester 2 courses included
-spHasS2Only([Course|_], [_|SPs2]) :-
+spHasS2Only([Course|SPs2]) :-
 	s2(Course),
-	spHasS2Only(SPs2,SPs2).
+	spHasS2Only(SPs2).
 
-%%	spHasS2Only([], _) :- if course is empty true.
-spHasS2Only([], []).
+%%	spHasS2Only([]) :-  true.
+spHasS2Only([]).
 
 
 
@@ -96,7 +99,7 @@ spHasS2Only([], []).
 %%	and prior meets prerequsite requirements
 preok(SP) :-
 	reverse(SP, SPrev),
-	spHasPre(SPrev, SPrev).
+	spHasPre(SPrev).
 
 
 %% INSERT ANY RELATIONS REQUIRED BY preok AT THIS POINT
@@ -113,30 +116,29 @@ reverse(L, Rev) :- accRev(L, [], Rev).
 accRev([Head|Tail], Accu, Rev) :- accRev(Tail, [Head|Accu], Rev).
 accRev([], Accu, Accu).
 
-%%	 spHasPre(Load, SP) :- true if either X or Y is empty list.
-spHasPre([],_).
-spHasPre(_, []).
+%%	 spHasPre([]) :- true.
+spHasPre([]).
 
-%%	spHasPre ([Load|_], [_|SP]) :- Check if the Study Plan has
+%%	spHasPre ([Load|SP]) :- Check if the Study Plan has
 %%	all required prerequiste complete. Course Load (Load) = one
 %%	semester
-spHasPre([Load|_], [_|SP]) :-
+spHasPre([Load|SP]) :-
 	% Check if course load has pres
-	semHasPre(Load, Load, SP),
-	spHasPre(SP, SP).
+	semHasPre(Load, SP),
+	spHasPre(SP).
 
 
-%%	semHasPre(Course,Semester,StudyPlan) :- if Course or SP is empty
-semHasPre([], _, _).
-semHasPre(_, _, []).
+%%	semHasPre([Course|Sem], SP) :- if Course|Sem or SP is empty
+semHasPre([], _).
+semHasPre(_, []).
 
-%%	semHasPre(Course, Sem, SP) :- Check if each indivdual course in
+%%	semHasPre([Course|Sem], SP) :- Check if each indivdual course in
 %%	the semester has prequireisite requirements complete.
-semHasPre([Course|_], [_|Sem], SP) :-
+semHasPre([Course|Sem], SP) :-
 	findall(Crs,courseHasPre(Course, SP, Crs), Pres),
 	length(Pres, NPres),
 	NPres >= 1,
-	semHasPre(Sem, Sem, SP).
+	semHasPre(Sem, SP).
 
 
 %%	courseHasPre(Course, SP, Crs) :- find pres of each course,
