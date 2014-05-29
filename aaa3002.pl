@@ -1,6 +1,7 @@
 
 %% aaa for csse3002
 %% author: Paul Bailes 7 May 2014
+%% assignment by Aaron Hayes 2014
 
 %% INSERT ASSIGNMENT 3 SOLUTION CODE AT THIS POINT
 
