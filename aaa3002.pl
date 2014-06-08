@@ -28,7 +28,6 @@ spHasLvl1(SP,Crs) :-
 
 %%	semestersok([Prior,S1,...,Sn]) :- study plan with semesters S1
 %%	... Sn and prior meets timetable requirements
-semestersok([]), !.
 semestersok([_|SP]) :-
 	%% split into two study plans(semester 1 and semester 2 study plans).
 	splitSP(SP,SPs2,SPs1),
