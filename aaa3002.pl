@@ -45,7 +45,7 @@ semestersok(SP) :-
 	%% Check is SPs2 contains only s2 courses.
 	(SPs2 == [] -> true;
 	courses(SPs2,Crss2),
-	spHasS2Only(Crss2)).
+	spHasS2Only(Crss2)), !.
 
 %% semestersok([]) :- null input case
 semestersok([]).
@@ -100,7 +100,7 @@ spHasS2Only([]).
 %%	and prior meets prerequsite requirements
 preok(SP) :-
 	reverse(SP, SPrev),
-	spHasPre(SPrev).
+	spHasPre(SPrev), !.
 
 
 %% INSERT ANY RELATIONS REQUIRED BY preok AT THIS POINT
@@ -153,7 +153,7 @@ courseHasPre(Course, SP, Crs) :-
 
 %% MODIFY binftech AT THIS POINT
 %% binftech([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and prior study Prior qualifies for BInfTech
-binftech(SP) :- partAok(SP), partBok(SP), partBCok(SP), lvl3ok(SP), lvl1ok(SP), semestersok(SP), preok(SP).
+binftech(SP) :- partAok(SP), partBok(SP), partBCok(SP), lvl3ok(SP), lvl1ok(SP), semestersok(SP), preok(SP), !.
 
 %% partAok([Prior,S1,...,Sn]):- study plan with semesters S1 ... Sn and prior study Prior meets Part A requirements
 partAok(SP) :-
