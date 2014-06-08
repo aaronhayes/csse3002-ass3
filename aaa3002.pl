@@ -24,18 +24,14 @@ spHasLvl1(SP,Crs) :-
        member(Crs,Crss).
 
 
-
-
-
 %% INSERT semestersok AT THIS POINT
 
 %%	semestersok([Prior,S1,...,Sn]) :- study plan with semesters S1
 %%	... Sn and prior meets timetable requirements
-semestersok(SP) :-
-	%% Remove prior courses and split into two study plans
-	%% (semester 1 and semester 2 study plans).
-	removePrior(SP, SPnew),
-	splitSP(SPnew,SPs2,SPs1),
+semestersok([]), !.
+semestersok([_|SP]) :-
+	%% split into two study plans(semester 1 and semester 2 study plans).
+	splitSP(SP,SPs2,SPs1),
 
 	%% Check if SPs1 contains only s1 courses
 	(SPs1 == [] -> true;
@@ -51,10 +47,6 @@ semestersok(SP) :-
 semestersok([]).
 
 %% INSERT ANY RELATIONS REQUIRED BY semestersok AT THIS POINT
-
-%%	 removePrior Remove the prior courses from a study plan
-removePrior([_|SP], SP).
-
 %%	splitSP(SP,SPs2,SPs1) :- Split Study Plan (SP) into study plans
 %%	for semesters 1 (SPs1) and 2 (SPs2)
 splitSP(SP, SPs2, SPs1) :-
@@ -90,7 +82,6 @@ spHasS2Only([Course|SPs2]) :-
 
 %%	spHasS2Only([]) :-  true.
 spHasS2Only([]).
-
 
 
 
