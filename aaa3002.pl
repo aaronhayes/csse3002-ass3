@@ -59,7 +59,7 @@ getS1([Head|Tail], SPs2, [Head|SPs1]) :-
 getS1([], [], []).
 
 %%	getS2([Head|Tail], [Head|SPs2], SPs1) :- Handle the
-%	semester 2 position, then the semester 1 position
+%%	semester 2 position, then the semester 1 position
 getS2([Head|Tail], [Head|SPs2], SPs1) :-
     getS1(Tail, SPs2, SPs1).
 getS2([], [], []).
@@ -100,7 +100,6 @@ sublist([], _ ).
 sublist([Head|Tail], L) :-
 	member(Head, L),
 	subset(Tail, L).
-
 
 %%	 reverse :- reverse list L
 reverse(L, Rev) :- accRev(L, [], Rev).
