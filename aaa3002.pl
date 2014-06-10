@@ -95,13 +95,13 @@ preok(SP) :-
 
 %% INSERT ANY RELATIONS REQUIRED BY preok AT THIS POINT
 
-%%	sublist :- check if list X is in Y
+%%	sublist(X, Y) :- check if list X is in Y
 sublist([], _ ).
 sublist([Head|Tail], L) :-
 	member(Head, L),
 	subset(Tail, L).
 
-%%	 reverse :- reverse list L
+%%	 reverse(L, Rev) :- reverse list L
 reverse(L, Rev) :- accRev(L, [], Rev).
 accRev([Head|Tail], Accu, Rev) :- accRev(Tail, [Head|Accu], Rev).
 accRev([], Accu, Accu).
