@@ -101,10 +101,10 @@ sublist([Head|Tail], L) :-
 	member(Head, L),
 	subset(Tail, L).
 
-%%	 reverse(L, Rev) :- reverse list L
-reverse(L, Rev) :- accRev(L, [], Rev).
-accRev([Head|Tail], Accu, Rev) :- accRev(Tail, [Head|Accu], Rev).
-accRev([], Accu, Accu).
+%%	 reverse(L, Reverse) :- reverse list L
+reverse(L, Reverse) :- accReverse(L, [], Reverse).
+accReverse([Head|Tail], Acc, Reverse) :- accReverse(Tail, [Head|Acc], Reverse).
+accReverse([], Acc, Acc).
 
 %%	 spHasPre([]) :- true.
 spHasPre([]).
